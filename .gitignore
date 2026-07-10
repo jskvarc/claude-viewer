@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+
+# Runtime artifacts
+claude-viewer.log
+claude-viewer.run
+.nicegui/
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
