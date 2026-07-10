@@ -7,6 +7,7 @@ from types import SimpleNamespace
 from nicegui import run, ui
 
 from . import config as config_mod
+from . import export as export_mod
 from . import search as search_mod
 from . import store
 
@@ -240,6 +241,19 @@ def build_page() -> None:  # noqa: PLR0915 - one page, one builder
                 browse_view.refresh()
 
             ui.switch('Show tool calls', value=state.show_tools, on_change=toggle_tools)
+
+            async def export_pdf() -> None:
+                session, project = state.session, state.project
+                try:
+                    pdf_bytes = await run.cpu_bound(
+                        export_mod.session_to_pdf, project.real_path, session, state.show_tools)
+                except Exception as exc:  # noqa: BLE001 - surface any render error
+                    ui.notify(f'PDF export failed: {exc}', type='negative', timeout=8000)
+                    return
+                ui.download.content(pdf_bytes, export_mod.pdf_filename(session.title))
+
+            ui.button(icon='picture_as_pdf', on_click=export_pdf).props('flat round') \
+                .tooltip('Export conversation to PDF (tool calls included if shown)')
         for message in state.session.messages:
             render_message(message)
 

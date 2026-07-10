@@ -15,6 +15,9 @@ A NiceGUI web app for browsing and searching your Claude Code session history
   ranks results by cosine similarity. Embeddings are cached in
   `~/.cache/claude-viewer/embeddings/` and refreshed automatically when a
   session file or the model changes.
+- **PDF export** — download any conversation as a formatted PDF (markdown
+  rendering, code blocks, optional tool calls) via the button in the
+  conversation header.
 - **LLM server configuration in the GUI** — gear icon, top right: base URL,
   API key, embedding model, result count, plus a connection test. Settings
   persist in `~/.config/claude-viewer/config.json`.
