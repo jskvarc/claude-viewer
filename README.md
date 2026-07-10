@@ -48,6 +48,48 @@ To run in the foreground instead:
 .venv/bin/python main.py --host 0.0.0.0 --port 9000
 ```
 
+## Run at boot (systemd)
+
+Create `~/.config/systemd/user/claude-viewer.service` (adjust the paths to
+where you cloned the repo):
+
+```ini
+[Unit]
+Description=Claude Code Viewer (NiceGUI web app)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/projects/claude-viewer
+ExecStart=%h/projects/claude-viewer/.venv/bin/python main.py --host 0.0.0.0 --port 8092
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+```
+
+Enable it and allow it to run without an active login session:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now claude-viewer
+loginctl enable-linger          # start at boot, keep running after logout
+```
+
+Managing the service:
+
+```bash
+systemctl --user status claude-viewer          # status
+systemctl --user restart claude-viewer         # restart, e.g. after git pull
+journalctl --user -u claude-viewer -f          # live logs
+systemctl --user disable --now claude-viewer   # undo autostart
+```
+
+A user service runs as you, which the app needs anyway to read
+`~/.claude/projects`. Don't use `start.sh` on the same port while the
+service is running.
+
 ## Using Ollama as the LLM server
 
 On the machine that hosts Ollama (local or remote):
